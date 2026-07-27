@@ -1,153 +1,183 @@
-# 🚀 MeetMind AI
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![Streamlit](https://img.shields.io/badge/Streamlit-Live-red)
+![Whisper](https://img.shields.io/badge/OpenAI-Whisper-green)
+![LangChain](https://img.shields.io/badge/LangChain-RAG-success)
+![Mistral AI](https://img.shields.io/badge/Mistral-AI-orange)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
-### Intelligent Meeting Intelligence Platform powered by Generative AI
+# 🧠 MeetMind AI – Intelligent Meeting Analysis & Knowledge Assistant
 
-MeetMind AI is an AI-powered meeting intelligence platform that transforms long meetings, lectures, podcasts and YouTube videos into structured knowledge.
+Transform YouTube videos or meeting recordings into searchable knowledge using AI.
 
-The platform automatically transcribes audio, generates executive summaries, extracts action items, key decisions and open questions, enables context-aware AI chat using Retrieval-Augmented Generation (RAG), and exports professional PDF reports through an elegant Streamlit dashboard.
-
----
-
-## ✨ Features
-
-- 🎙️ Automatic Speech-to-Text using Whisper
-- 🧠 AI Generated Meeting Title
-- 📝 Executive Summary
-- ✅ Action Items Extraction
-- 📌 Key Decisions Extraction
-- ❓ Open Questions Extraction
-- 💬 AI Chat with Meeting (RAG)
-- 📄 Professional PDF Report Export
-- 📊 Meeting Statistics Dashboard
-- 🎨 Premium Dark UI
-- 📺 YouTube Video Support
-- 📁 Local Audio File Support
+MeetMind AI automatically transcribes audio, generates concise summaries, extracts action items, identifies key decisions, answers questions through RAG (Retrieval-Augmented Generation), and exports professional meeting reports as PDF.
 
 ---
 
-## 🖥️ Dashboard
+## 🚀 Features
 
-### Meeting Overview
+- 🎥 Analyze YouTube videos
+- 🎙️ Speech-to-Text using OpenAI Whisper
+- 📝 AI-generated Meeting Summary
+- 📌 Automatic Meeting Title
+- ✅ Action Item Extraction
+- 📍 Key Decision Detection
+- ❓ Open Question Identification
+- 💬 Chat with your Meeting (RAG)
+- 📄 Export Professional PDF Report
+- 🎨 Modern Dark Dashboard UI
 
-- AI Generated Title
-- Reading Time
-- Transcript Statistics
-- Language Detection
+---
 
-### AI Analysis
+## 🏗️ System Architecture
 
-- Executive Summary
-- Action Items
-- Key Decisions
-- Open Questions
+```text
+                         ┌────────────────────┐
+                         │       User         │
+                         └─────────┬──────────┘
+                                   │
+                                   ▼
+                     ┌──────────────────────────┐
+                     │     Streamlit UI         │
+                     └─────────┬────────────────┘
+                               │
+                               ▼
+                    ┌───────────────────────────┐
+                    │      Python Backend       │
+                    └─────────┬─────────────────┘
+                              │
+     ┌────────────────────────┼─────────────────────────┐
+     │                        │                         │
+     ▼                        ▼                         ▼
+┌──────────┐           ┌────────────┐          ┌────────────────┐
+│ yt-dlp   │──────────▶│ Whisper AI │─────────▶│ Transcript Text │
+└──────────┘           └────────────┘          └────────────────┘
+                                                     │
+                                                     ▼
+                                       ┌────────────────────────┐
+                                       │ HuggingFace Embeddings │
+                                       └──────────┬─────────────┘
+                                                  │
+                                                  ▼
+                                          ┌──────────────┐
+                                          │  ChromaDB    │
+                                          │ Vector Store │
+                                          └──────┬───────┘
+                                                 │
+                                ┌────────────────┴────────────────┐
+                                ▼                                 ▼
+                      ┌────────────────┐                 ┌──────────────────┐
+                      │ LangChain RAG  │───────────────▶│    Mistral AI     │
+                      └────────────────┘                 └──────────────────┘
+                                                             │
+             ┌───────────────────────────────────────────────┼─────────────────────────────────────┐
+             ▼                                               ▼                                     ▼
+     Meeting Summary                               Action Items                          Chat with Meeting
+             │                                               │
+             └──────────────────────────────┬────────────────┘
+                                            ▼
+                                  Professional PDF Report
+                                       (ReportLab)
+```
 
-### RAG Chat
+---
 
-Ask anything about your meeting.
+# 🛠️ Tech Stack
 
-Examples:
+| Technology | Purpose |
+|------------|---------|
+| **Python** | Core backend development |
+| **Streamlit** | Interactive web application |
+| **OpenAI Whisper** | Speech-to-text transcription |
+| **LangChain** | RAG pipeline orchestration |
+| **Mistral AI** | LLM for summarization & question answering |
+| **ChromaDB** | Vector database |
+| **HuggingFace Embeddings** | Semantic embeddings |
+| **yt-dlp** | Download audio from YouTube |
+| **ReportLab** | PDF report generation |
 
-- Summarize the discussion.
-- What were the key features?
-- What decisions were made?
-- Explain this topic in simple words.
+---
+
+# ⚙️ Workflow
+
+1. User enters a YouTube URL.
+2. yt-dlp downloads the audio.
+3. Whisper converts speech into text.
+4. Transcript is split into semantic chunks.
+5. HuggingFace Embeddings generate vector representations.
+6. ChromaDB stores transcript embeddings.
+7. LangChain retrieves relevant chunks.
+8. Mistral AI generates:
+   - Meeting Title
+   - Summary
+   - Action Items
+   - Key Decisions
+   - Open Questions
+9. Users can interact with the meeting using AI-powered RAG chat.
+10. ReportLab exports the final meeting report as a PDF.
+
+---
+
+# 📊 AI Capabilities
+
+- Speech-to-Text
+- Meeting Summarization
+- Retrieval-Augmented Generation (RAG)
+- Semantic Search
+- Intelligent Question Answering
+- Knowledge Extraction
+- PDF Report Generation
+
+---
+
+# 📸 Screenshots
+
+### Dashboard
+
+_Add dashboard screenshot here_
+
+### Meeting Summary
+
+_Add summary screenshot here_
+
+### AI Chat
+
+_Add RAG chat screenshot here_
 
 ### PDF Export
 
-Generate a professional AI Meeting Report with:
-
-- Meeting Title
-- Executive Summary
-- Action Items
-- Key Decisions
-- Open Questions
-- Full Transcript
+_Add export screenshot here_
 
 ---
 
-## 🏗️ Project Architecture
+# 🚀 Installation
 
-```
-User Input
-      │
-      ▼
-Audio Extraction
-      │
-      ▼
-Whisper Transcription
-      │
-      ▼
-LLM Analysis (Mistral AI)
-      │
-      ├── Title Generation
-      ├── Summary
-      ├── Action Items
-      ├── Key Decisions
-      └── Open Questions
-      │
-      ▼
-Embedding Generation
-      │
-      ▼
-ChromaDB Vector Store
-      │
-      ▼
-LangChain RAG
-      │
-      ▼
-Interactive AI Chat
-      │
-      ▼
-PDF Report Generation
+```bash
+git clone https://github.com/Naincy33/MeetMind-AI.git
+
+cd MeetMind-AI
+
+pip install -r requirements.txt
+
+streamlit run app.py
 ```
 
 ---
 
-## ⚙️ Tech Stack
-
-### AI & LLM
-
-- Whisper
-- Mistral AI
-- LangChain (LCEL)
-- HuggingFace Embeddings
-
-### Vector Database
-
-- ChromaDB
-
-### Backend
-
-- Python
-
-### Frontend
-
-- Streamlit
-
-### Report Generation
-
-- ReportLab
-
-### Media Processing
-
-- yt-dlp
-- FFmpeg
-
----
-
-## 📂 Project Structure
+# 📂 Project Structure
 
 ```
 MeetMind-AI/
 │
 ├── app.py
 ├── main.py
+│
 ├── core/
 │   ├── extractor.py
 │   ├── rag_engine.py
 │   ├── summarizer.py
 │   ├── transcriber.py
-│   └── vector_store.py
+│   ├── vector_store.py
+│   └── diarization.py
 │
 ├── utils/
 │   ├── audio_processor.py
@@ -155,52 +185,33 @@ MeetMind-AI/
 │
 ├── downloads/
 ├── vector_db/
-├── Requirements.txt
+├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## 🚀 Installation
+# 🎯 Future Enhancements
 
-```bash
-git clone <repository-url>
-
-cd MeetMind-AI
-
-pip install -r Requirements.txt
-```
-
-Create a `.env` file
-
-```env
-MISTRAL_API_KEY=YOUR_API_KEY
-```
-
-Run the application
-
-```bash
-streamlit run app.py
-```
-
----
-
-## 💡 Future Enhancements
-
-- DOCX Export
 - Speaker Diarization
 - Meeting History
-- Cloud Deployment
-- Team Collaboration
+- Multi-document RAG
+- Speaker Analytics
+- Keyword Timeline
+- Cloud Storage Integration
+- Live Meeting Support
+- Multi-language Transcription
 
 ---
 
-## 👩‍💻 Developed By
+# 👩‍💻 Developer
 
 **Naincy**
 
-B.Tech Computer Science Engineering  
-B.M.S. College of Engineering
+B.Tech CSE Student | AI & ML Enthusiast
+
+- GitHub: https://github.com/Naincy33
+- LinkedIn: www.linkedin.com/in/naincy33
 
 ---
 
