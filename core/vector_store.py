@@ -1,5 +1,5 @@
 import os
-import shutil
+import tempfile
 
 from langchain_chroma import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -7,14 +7,20 @@ from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
-CHROMA_DIR = "vector_db"
+# -------------------------------------------------------
+# Chroma Configuration
+# -------------------------------------------------------
+
 COLLECTION_NAME = "meeting_transcript"
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 
+# Streamlit Cloud compatible writable directory
+CHROMA_DIR = os.path.join(tempfile.gettempdir(), "meetmind_vector_db")
 
-# -----------------------------
+
+# -------------------------------------------------------
 # Embedding Model
-# -----------------------------
+# -------------------------------------------------------
 
 def get_embeddings():
     return HuggingFaceEmbeddings(
@@ -23,35 +29,16 @@ def get_embeddings():
     )
 
 
-# -----------------------------
-# Delete Previous Vector Store
-# -----------------------------
-
-def clear_vector_store():
-    """
-    Delete the previous Chroma database completely.
-    This prevents old meeting embeddings from mixing
-    with the current meeting.
-    """
-
-    if os.path.exists(CHROMA_DIR):
-        print("Removing previous vector database...")
-        shutil.rmtree(CHROMA_DIR, ignore_errors=True)
-
-
-# -----------------------------
+# -------------------------------------------------------
 # Build Vector Store
-# -----------------------------
+# -------------------------------------------------------
 
 def build_vector_store(transcript: str) -> Chroma:
 
     if not transcript or transcript.strip() == "":
         raise ValueError("Transcript is empty.")
 
-    print("Building new vector store...")
-
-    # Always remove previous embeddings
-    clear_vector_store()
+    print("Building vector store...")
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,
@@ -70,6 +57,13 @@ def build_vector_store(transcript: str) -> Chroma:
 
     embeddings = get_embeddings()
 
+    # Remove previous temporary DB
+    if os.path.exists(CHROMA_DIR):
+        import shutil
+        shutil.rmtree(CHROMA_DIR, ignore_errors=True)
+
+    os.makedirs(CHROMA_DIR, exist_ok=True)
+
     vector_store = Chroma.from_documents(
         documents=docs,
         embedding=embeddings,
@@ -77,14 +71,14 @@ def build_vector_store(transcript: str) -> Chroma:
         persist_directory=CHROMA_DIR,
     )
 
-    print(f"Vector store created with {len(docs)} chunks.")
+    print(f"✅ Vector store created with {len(docs)} chunks.")
 
     return vector_store
 
 
-# -----------------------------
+# -------------------------------------------------------
 # Load Existing Vector Store
-# -----------------------------
+# -------------------------------------------------------
 
 def load_vector_store() -> Chroma:
 
@@ -97,9 +91,9 @@ def load_vector_store() -> Chroma:
     )
 
 
-# -----------------------------
+# -------------------------------------------------------
 # Retriever
-# -----------------------------
+# -------------------------------------------------------
 
 def get_retriever(
     vector_store: Chroma,
