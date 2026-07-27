@@ -1,0 +1,240 @@
+import os
+from datetime import datetime
+
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import inch
+from reportlab.platypus import (
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+)
+from reportlab.pdfgen import canvas
+
+
+# ---------------- Page Number ---------------- #
+
+class NumberedCanvas(canvas.Canvas):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.pages = []
+
+    def showPage(self):
+        self.pages.append(dict(self.__dict__))
+        self._startPage()
+
+    def save(self):
+        page_count = len(self.pages)
+
+        for page in self.pages:
+            self.__dict__.update(page)
+
+            self.setFont("Helvetica", 9)
+            self.setFillColor(colors.grey)
+
+            self.drawRightString(
+                7.6 * inch,
+                0.5 * inch,
+                f"Page {self._pageNumber} of {page_count}",
+            )
+
+            super().showPage()
+
+        super().save()
+
+
+# ---------------- Utility ---------------- #
+
+def add_section(story, title, content, heading_style, body_style):
+    story.append(Paragraph(title, heading_style))
+    story.append(Spacer(1, 0.10 * inch))
+
+    if content is None:
+        content = "Not Available"
+
+    if isinstance(content, list):
+        for item in content:
+            story.append(
+                Paragraph(f"• {item}", body_style)
+            )
+
+    else:
+        text = str(content).strip()
+
+        if text == "":
+            text = "Not Available"
+
+        lines = text.split("\n")
+
+        for line in lines:
+            line = line.strip()
+
+            if not line:
+                continue
+
+            if line.startswith("-") or line.startswith("•"):
+                story.append(
+                    Paragraph(
+                        f"• {line.lstrip('-• ').strip()}",
+                        body_style,
+                    )
+                )
+            else:
+                story.append(
+                    Paragraph(line, body_style)
+                )
+
+    story.append(Spacer(1, 0.25 * inch))
+
+
+# ---------------- PDF Generator ---------------- #
+
+def create_pdf(
+    filename,
+    title,
+    summary,
+    action_items,
+    decisions,
+    questions,
+    transcript,
+):
+
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle(
+        "TitleStyle",
+        parent=styles["Title"],
+        alignment=TA_CENTER,
+        fontSize=24,
+        spaceAfter=20,
+        textColor=colors.HexColor("#0F172A"),
+    )
+
+    subtitle_style = ParagraphStyle(
+        "Subtitle",
+        parent=styles["Normal"],
+        alignment=TA_CENTER,
+        textColor=colors.grey,
+        fontSize=11,
+        spaceAfter=20,
+    )
+
+    heading_style = ParagraphStyle(
+        "Heading",
+        parent=styles["Heading2"],
+        fontSize=16,
+        textColor=colors.HexColor("#1E3A8A"),
+        spaceBefore=12,
+        spaceAfter=8,
+    )
+
+    body_style = ParagraphStyle(
+        "Body",
+        parent=styles["BodyText"],
+        fontSize=10,
+        leading=18,
+        spaceAfter=4,
+    )
+
+    footer_style = ParagraphStyle(
+        "Footer",
+        parent=styles["Italic"],
+        alignment=TA_CENTER,
+        textColor=colors.grey,
+        fontSize=9,
+    )
+
+    doc = SimpleDocTemplate(
+        filename,
+        rightMargin=0.6 * inch,
+        leftMargin=0.6 * inch,
+        topMargin=0.7 * inch,
+        bottomMargin=0.8 * inch,
+    )
+
+    story = []
+
+    # Cover
+
+    story.append(
+        Paragraph(
+            "AI MEETING REPORT",
+            title_style,
+        )
+    )
+
+    story.append(
+        Paragraph(
+            datetime.now().strftime(
+                "Generated on %d %B %Y, %I:%M %p"
+            ),
+            subtitle_style,
+        )
+    )
+
+    story.append(Spacer(1, 0.20 * inch))
+
+    add_section(
+        story,
+        "Meeting Title",
+        title,
+        heading_style,
+        body_style,
+    )
+
+    add_section(
+        story,
+        "Executive Summary",
+        summary,
+        heading_style,
+        body_style,
+    )
+
+    add_section(
+        story,
+        "Action Items",
+        action_items,
+        heading_style,
+        body_style,
+    )
+
+    add_section(
+        story,
+        "Key Decisions",
+        decisions,
+        heading_style,
+        body_style,
+    )
+
+    add_section(
+        story,
+        "Open Questions",
+        questions,
+        heading_style,
+        body_style,
+    )
+
+    add_section(
+        story,
+        "Transcript",
+        transcript,
+        heading_style,
+        body_style,
+    )
+
+    story.append(Spacer(1, 0.35 * inch))
+
+    story.append(
+        Paragraph(
+            "Generated by <b>AI Video Assistant</b>",
+            footer_style,
+        )
+    )
+
+    doc.build(
+        story,
+        canvasmaker=NumberedCanvas,
+    )
