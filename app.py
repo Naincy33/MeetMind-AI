@@ -757,8 +757,6 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-    language = st.selectbox("Language", ["english", "hinglish"], index=0)
-
     run_btn = st.button("Analyse", use_container_width=True)
 
     if st.session_state.pipeline_done:
@@ -814,7 +812,7 @@ if run_btn:
             update_step("audio", "done")
 
             update_step("transcript", "active")
-            transcript = transcribe_all(chunks, language)
+            transcript = transcribe_all(chunks)
             update_step("transcript", "done")
 
             update_step("title", "active")
@@ -893,7 +891,7 @@ if st.session_state.result:
     metrics = [
         (m1, "hash",      "Words",              f"{words:,}"),
         (m2, "clock",     "Reading Time",       f"{rtime} min"),
-        (m3, "globe",     "Language",           language.capitalize()),
+        (m3, "globe",     "Language",           "English"),
         (m4, "file-text", "Transcript Length",  f"{tlen:,} chars"),
     ]
     for col, ic, label, value in metrics:
